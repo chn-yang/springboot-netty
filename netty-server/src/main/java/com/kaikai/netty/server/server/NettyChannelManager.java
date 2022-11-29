@@ -3,7 +3,6 @@ package com.kaikai.netty.server.server;
 
 import com.kaikai.netty.common.codec.Invocation;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelId;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +27,11 @@ public class NettyChannelManager {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private static final Object channelVal = new Object();
     /**
      * Channel 映射
      */
-    private final ConcurrentMap<ChannelId, Channel> channels = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Channel, Object> channels = new ConcurrentHashMap<>();
     /**
      * 用户与 Channel 的映射。
      *
@@ -45,7 +45,7 @@ public class NettyChannelManager {
      * @param channel Channel
      */
     public void add(Channel channel) {
-        channels.put(channel.id(), channel);
+        channels.put(channel, channelVal);
         logger.info("[add][一个连接({})加入]", channel.id());
     }
 
@@ -56,8 +56,7 @@ public class NettyChannelManager {
      * @param user 用户
      */
     public void addUser(Channel channel, String user) {
-        Channel existChannel = channels.get(channel.id());
-        if (existChannel == null) {
+        if (!channels.containsKey(channel)) {
             logger.error("[addUser][连接({}) 不存在]", channel.id());
             return;
         }
@@ -74,7 +73,7 @@ public class NettyChannelManager {
      */
     public void remove(Channel channel) {
         // 移除 channels
-        channels.remove(channel.id());
+        channels.remove(channel);
         // 移除 userChannels
         if (channel.hasAttr(CHANNEL_ATTR_KEY_USER)) {
             userChannels.remove(channel.attr(CHANNEL_ATTR_KEY_USER).get());
@@ -109,7 +108,7 @@ public class NettyChannelManager {
      * @param invocation 消息体
      */
     public void sendAll(Invocation invocation) {
-        for (Channel channel : channels.values()) {
+        for (Channel channel : channels.keySet()) {
             if (!channel.isActive()) {
                 logger.error("[send][连接({})未激活]", channel.id());
                 break;

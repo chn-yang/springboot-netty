@@ -16,7 +16,7 @@ public class NettyClientHandlerInitializer extends ChannelInitializer<Channel> {
     /**
      * 心跳超时时间
      */
-    private static final Integer READ_TIMEOUT_SECONDS = 60;
+    private static final Integer READ_TIMEOUT_SECONDS = 70;
 
     @Autowired
     private MessageDispatcher messageDispatcher;

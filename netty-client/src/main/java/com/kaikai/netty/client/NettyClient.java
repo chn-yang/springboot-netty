@@ -63,7 +63,7 @@ public class NettyClient {
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 // 允许较小的数据包的发送，降低延迟
                 .option(ChannelOption.TCP_NODELAY, true)
-                .handler(nettyClientHandlerInitializer);
+                .handler(nettyClientHandlerInitializer);    //添加心跳处理器
         // 链接服务器，并异步等待成功，即启动客户端
         bootstrap.connect().addListener(new ChannelFutureListener() {
 
