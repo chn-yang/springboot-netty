@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -25,18 +26,18 @@ public class NettyChannelManager {
      */
     private static final AttributeKey<String> CHANNEL_ATTR_KEY_USER = AttributeKey.newInstance("user");
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Channel 映射
      */
-    private ConcurrentMap<ChannelId, Channel> channels = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ChannelId, Channel> channels = new ConcurrentHashMap<>();
     /**
      * 用户与 Channel 的映射。
      *
      * 通过它，可以获取用户对应的 Channel。这样，我们可以向指定用户发送消息。
      */
-    private ConcurrentMap<String, Channel> userChannels = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Channel> userChannels = new ConcurrentHashMap<>();
 
     /**
      * 添加 Channel 到 {@link #channels} 中

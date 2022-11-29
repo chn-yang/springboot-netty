@@ -10,10 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.lang.invoke.MethodHandles;
+
 
 public class HeartbeatRequestHandler implements MessageHandler<HeartbeatRequest> {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
     public void execute(Channel channel, HeartbeatRequest message) {

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -25,7 +26,7 @@ public class NettyClient {
      */
     private static final Integer RECONNECT_SECONDS = 20;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Value("${netty.server.host}")
     private String serverHost;

@@ -16,12 +16,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.lang.invoke.MethodHandles;
 import java.net.InetSocketAddress;
 
 @Component
 public class NettyServer {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Value("${netty.port}")
     private Integer port;
@@ -32,11 +33,11 @@ public class NettyServer {
     /**
      * boss 线程组，用于服务端接受客户端的连接
      */
-    private EventLoopGroup bossGroup = new NioEventLoopGroup();
+    private final EventLoopGroup bossGroup = new NioEventLoopGroup();
     /**
      * worker 线程组，用于服务端接受客户端的数据读写
      */
-    private EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private final EventLoopGroup workerGroup = new NioEventLoopGroup();
     /**
      * Netty Server Channel
      */

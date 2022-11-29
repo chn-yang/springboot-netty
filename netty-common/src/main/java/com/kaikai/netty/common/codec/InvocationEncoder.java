@@ -7,8 +7,10 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
+
 public class InvocationEncoder extends MessageToByteEncoder<Invocation> {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Invocation invocation, ByteBuf out) throws Exception {

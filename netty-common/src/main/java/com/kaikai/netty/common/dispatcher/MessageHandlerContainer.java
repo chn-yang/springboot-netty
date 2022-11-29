@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.awt.*;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 public class MessageHandlerContainer implements InitializingBean {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * 消息类型与 MessageHandler 的映射
