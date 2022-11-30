@@ -21,6 +21,7 @@ public class MessageDispatcher extends SimpleChannelInboundHandler<Invocation> {
 
     private final int processors = NettyRuntime.availableProcessors();
 
+    //策略模式
     //消息处理器容器, 在Spring初始化时扫描所有MessageHandler类型
     //每种 Message 对应 一种MessageHandler 添加到容器MessageHandlerContainer中
     //收到消息时从消息体Invocation中获取type类型并在上述容器中获得对应的handler
