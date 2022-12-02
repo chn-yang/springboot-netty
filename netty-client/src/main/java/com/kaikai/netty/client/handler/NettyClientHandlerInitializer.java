@@ -6,7 +6,6 @@ import com.kaikai.netty.common.dispatcher.MessageDispatcher;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +13,10 @@ import org.springframework.stereotype.Component;
 public class NettyClientHandlerInitializer extends ChannelInitializer<Channel> {
 
     /**
-     * 心跳超时时间
+     * 客户端心跳超时时间, IdleStateHandler的writerIdleTimeSeconds参数, 超过这个时间则触发IdleStateEvent
+     * 在客户端的userEventTriggered方法处理该事件发送心跳请求
      */
-    private static final Integer READ_TIMEOUT_SECONDS = 70;
+    private static final Integer HEARTBEAT_TIMEOUT_SECONDS = 50;
 
     @Autowired
     private MessageDispatcher messageDispatcher;
@@ -27,9 +27,8 @@ public class NettyClientHandlerInitializer extends ChannelInitializer<Channel> {
     @Override
     protected void initChannel(Channel ch) {
         ch.pipeline()
-                // 空闲检测
-                .addLast(new IdleStateHandler(READ_TIMEOUT_SECONDS, 0, 0))
-                .addLast(new ReadTimeoutHandler(3 * READ_TIMEOUT_SECONDS))
+                // 空闲检测, 使用写空闲检测发送心跳包
+                .addLast(new IdleStateHandler(0, HEARTBEAT_TIMEOUT_SECONDS, 0))
                 // 编码器
                 .addLast(new InvocationEncoder())
                 // 解码器

@@ -4,6 +4,8 @@ import com.kaikai.netty.server.server.NettyChannelManager;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +40,22 @@ public class NettyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         logger.error("[exceptionCaught][连接({}) 发生异常]", ctx.channel().id(), cause);
-        // 断开连接
-        ctx.channel().close();
     }
 
+    /*
+     * netty触发的各种事件, 可在此方法接收处理
+     * @param ctx
+     * @param event
+     * @throws Exception
+     */
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
+        //
+        if (event instanceof IdleStateEvent && ((IdleStateEvent) event).state() == IdleState.READER_IDLE) {
+            logger.info("[userEventTriggered IdleStateEvent.READER_IDLE]客户端[{}]心跳超时断开连接", ctx.channel().id());
+            ctx.channel().close();
+        } else {
+            super.userEventTriggered(ctx, event);
+        }
+    }
 }
