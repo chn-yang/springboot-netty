@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class NettyClientHandlerInitializer extends ChannelInitializer<Channel> {
 
     /**
-     * 客户端心跳超时时间, IdleStateHandler的writerIdleTimeSeconds参数, 超过这个时间则触发IdleStateEvent
+     * 客户端心跳时间, IdleStateHandler的writerIdleTimeSeconds参数, 超过这个时间则触发IdleStateEvent
      * 在客户端的userEventTriggered方法处理该事件发送心跳请求
      */
     private static final Integer HEARTBEAT_TIMEOUT_SECONDS = 50;
