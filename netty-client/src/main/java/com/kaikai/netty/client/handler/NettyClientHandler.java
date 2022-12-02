@@ -8,6 +8,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,8 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
-        // 空闲时，向服务端发起一次心跳
-        if (event instanceof IdleStateEvent) {
+        // 写空闲时，向服务端发起一次心跳
+        if (event instanceof IdleStateEvent && ((IdleStateEvent) event).state() == IdleState.WRITER_IDLE) {
             logger.info("[userEventTriggered][发起一次心跳]");
             HeartbeatRequest heartbeatRequest = new HeartbeatRequest("{heart:beat}");
             ctx.writeAndFlush(new Invocation(HeartbeatRequest.TYPE, heartbeatRequest))
