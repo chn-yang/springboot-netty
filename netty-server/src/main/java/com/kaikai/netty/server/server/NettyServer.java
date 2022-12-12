@@ -44,6 +44,8 @@ public class NettyServer {
     private Channel channel;
 
     /**
+     * netty配置的理解serverBootstrap.option和serverBootstrap.childOption
+     * #{link} https://www.cnblogs.com/xiaoyao-001/p/10855249.html
      * 启动 Netty Server
      */
     @PostConstruct
