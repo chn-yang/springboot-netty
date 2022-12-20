@@ -19,23 +19,23 @@ public class InvocationDecoder extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 
-        // 标记当前读取位置
+        // 标记当前读取位置, 因为还什么都没做标记索引将为0
         in.markReaderIndex();
         // 判断是否能够读取 length 长度
         if (in.readableBytes() <= 4) {
             return;
         }
         // 读取长度
-        int length = in.readInt();
+        int length = in.readInt();  //从byteBuf读取一个int数值, 这个操作将会把readerIndex + 4
         if (length < 0) {
             throw new CorruptedFrameException("negative length: " + length);
         }
         // 如果 message 不够可读，则退回到原读取位置
         if (in.readableBytes() < length) {
-            in.resetReaderIndex();
+            in.resetReaderIndex();  //传输层接收缓冲区的可读内容还未全部到达, 重新回到markReaderIndex处, 上面标记了为0 即开头
             return;
         }
-        // 读取内容
+        // 此处可读字节数达到了整个内容的大小 读取内容
         byte[] content = new byte[length];
         in.readBytes(content);
         // 解析成 Invocation

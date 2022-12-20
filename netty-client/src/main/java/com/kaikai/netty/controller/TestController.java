@@ -6,6 +6,7 @@ import com.kaikai.netty.common.codec.Invocation;
 import com.kaikai.netty.common.message.auth.AuthRequest;
 import com.kaikai.netty.common.message.chat.ChatSendToAllRequest;
 import com.kaikai.netty.common.message.chat.ChatSendToOneRequest;
+import com.kaikai.netty.common.message.heartbeat.HeartbeatRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +63,16 @@ public class TestController {
         request.setAccessToken(user);
         // 创建 Invocation 对象
         Invocation invocation = new Invocation(AuthRequest.TYPE, request);
+        // 发送消息
+        nettyClient.send(invocation);
+        return "success";
+    }
+
+    @PostMapping("/ping")
+    public String ping() {
+        HeartbeatRequest request = new HeartbeatRequest("ping");
+        // 创建 Invocation 对象
+        Invocation invocation = new Invocation(HeartbeatRequest.TYPE, request);
         // 发送消息
         nettyClient.send(invocation);
         return "success";
