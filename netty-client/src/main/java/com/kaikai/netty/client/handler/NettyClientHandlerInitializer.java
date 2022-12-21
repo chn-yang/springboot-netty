@@ -6,7 +6,9 @@ import com.kaikai.netty.common.dispatcher.MessageDispatcher;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,6 +26,10 @@ public class NettyClientHandlerInitializer extends ChannelInitializer<Channel> {
     @Autowired
     private NettyClientHandler nettyClientHandler;
 
+    @Qualifier("clientMessageDispatcherExecutorGroup")
+    @Autowired
+    private EventExecutorGroup messageDispatcherExecutorGroup;
+
     @Override
     protected void initChannel(Channel ch) {
         ch.pipeline()
@@ -34,7 +40,7 @@ public class NettyClientHandlerInitializer extends ChannelInitializer<Channel> {
                 // 解码器
                 .addLast(new InvocationDecoder())
                 // 消息分发器
-                .addLast(messageDispatcher)
+                .addLast(messageDispatcherExecutorGroup, messageDispatcher)
                 // 客户端处理器
                 .addLast(nettyClientHandler)
         ;

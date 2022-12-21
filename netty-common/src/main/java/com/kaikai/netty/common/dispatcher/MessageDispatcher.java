@@ -10,11 +10,6 @@ import io.netty.util.NettyRuntime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 @ChannelHandler.Sharable
 @Component
 public class MessageDispatcher extends SimpleChannelInboundHandler<Invocation> {
@@ -29,8 +24,8 @@ public class MessageDispatcher extends SimpleChannelInboundHandler<Invocation> {
     @Autowired
     private MessageHandlerContainer messageHandlerContainer;
 
-    private final ExecutorService executor = new ThreadPoolExecutor(processors, processors * 2, 30, TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(1024), new ThreadPoolExecutor.DiscardOldestPolicy());
+//    private final ExecutorService executor = new ThreadPoolExecutor(processors, processors * 2, 30, TimeUnit.SECONDS,
+//            new ArrayBlockingQueue<>(1024), new ThreadPoolExecutor.DiscardOldestPolicy());
 
 
     @Override
@@ -42,10 +37,12 @@ public class MessageDispatcher extends SimpleChannelInboundHandler<Invocation> {
         // 解析消息
         Message message = JSON.parseObject(invocation.getMessage(), messageClass);
         // 执行逻辑
-        executor.submit(() -> {
-            // noinspection unchecked
-            messageHandler.execute(ctx.channel(), message);
-        });
+//        executor.submit(() -> {
+//            // noinspection unchecked
+//        });
+
+        //此处不使用ThreadPoolExecutor属性, 在ChannelInitializer添加channelHandler时使用配置好的EventExecutorGroup bean
+        messageHandler.execute(ctx.channel(), message);
     }
 
 }

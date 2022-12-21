@@ -8,7 +8,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -28,6 +30,9 @@ public class NettyServerHandlerInitializer extends ChannelInitializer<Channel> {
     @Autowired
     private NettyServerHandler nettyServerHandler;  //连接管理服务器
 
+    @Qualifier("serverMessageDispatcherExecutorGroup")
+    @Autowired
+    private EventExecutorGroup messageDispatcherExecutorGroup;
 
     @Override
     protected void initChannel(Channel ch) throws Exception {
@@ -42,7 +47,7 @@ public class NettyServerHandlerInitializer extends ChannelInitializer<Channel> {
                 // 解码器
                 .addLast(new InvocationDecoder())
                 // 消息分发器
-                .addLast(messageDispatcher)
+                .addLast(messageDispatcherExecutorGroup, messageDispatcher)
                 // 服务端处理器
                 .addLast(nettyServerHandler);
     }

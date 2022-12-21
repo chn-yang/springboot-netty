@@ -70,7 +70,7 @@ public class TestController {
 
     @PostMapping("/ping")
     public String ping() {
-        HeartbeatRequest request = new HeartbeatRequest("ping");
+        HeartbeatRequest request = new HeartbeatRequest("{heart:beat}");
         // 创建 Invocation 对象
         Invocation invocation = new Invocation(HeartbeatRequest.TYPE, request);
         // 发送消息
